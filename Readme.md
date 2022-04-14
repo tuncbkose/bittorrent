@@ -7,6 +7,15 @@ bencoding.create_torrent_file(filename)
 I have also observed that on Reed's network sometimes my IP address changed, which requires regenerating the torrent.
 If you want to test different sizes for transfered pieces, change `bencoding.TORRENT_PIECE_LENGTH`.
 
+## Running to test
+First, generate the torrent file for a desired test file as described above (I ran into an issue on a Reed computer that required hardcoding the ip address but couldn't reproduce it).
+
+Second, start the tracker server with `python tracker.py`
+
+Third, run a number of clients with the file already downloaded option (description on how to use `client.py` is below).
+
+Lastly, run a client without the file already downloaded option in a directory where the file should be downloaded.
+
 ## Dependencies
 - aiohttp: To easily have asynchronous http
 
@@ -21,10 +30,17 @@ If you want to test different sizes for transfered pieces, change `bencoding.TOR
 
 **Potential improvements**
 - .torrent with multiple files
+  - This didn't seem very important to the networking aspect of the assignment, so I didn't do it.
 - Downloading from peers with partial files
-- Make tracker keep track of statistics
-- Download blocks of pieces instead of entire pieces
+  - I wasn't sure what would be the best way to do this, especially asynchronously. With the current structure I have, I guess I can prompt running `Connection`s to prompt the client to check for whether someone is trying to connect.
+  - After figuring out how to connect, the rest should not be too difficult because the manager abstracts away the handling of the file from specific connections.
 - Sophisticated queuing and piece downloading
+  - I thought implementing the protocol itself would be sufficient for now.
+- Make tracker keep track of statistics
+  - In the absence of the above, this didn't seem necessary
+- Download blocks of pieces instead of entire pieces
+  - This just made handling the file much simpler. I don't think it would be too complicated to add.
+
 
 ## Description of what is happening
 * [`bencoding.py`](./bencoding.py) contains encoding/decoding functions, a function to create torrent files, and a helper to work with url-encoding
