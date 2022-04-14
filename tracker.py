@@ -3,6 +3,7 @@ import argparse
 import urllib.parse
 import bencoding
 import random
+import socket
 from aiohttp import web
 
 
@@ -25,7 +26,7 @@ def extract_request_parameters(param_dict):
 def sample_peers():
     sample = random.sample(tuple(completed_peers), min(len(completed_peers), 50))  # sampling from set is deprecated
     compact = ""
-
+    print(f"Giving peers: {sample}")
     # put peers in compact form
     for ip, port in sample:
         nums = ip.split(".") + [port]
@@ -42,6 +43,7 @@ async def request_handler(request):
     params_urlencoded = request.query
     params = extract_request_parameters(params_urlencoded)
     peer = (request.remote, params["port"])  # ip addr and port pair
+    print(f"Received request from {peer}")
 
     # Form response
     payload = {"complete": len(completed_peers),
@@ -76,7 +78,7 @@ async def request_handler(request):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ip", default="127.0.0.8", help="ip address for client")
+    parser.add_argument("--ip", default=None, help="ip address for client")
     parser.add_argument("-p", "--port", type=int, default=42421, help="port for client")
     args = parser.parse_args()
 

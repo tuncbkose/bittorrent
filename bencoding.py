@@ -1,7 +1,9 @@
 # Implementation for bencoding encoding and decoding and .torrent file creation
 import hashlib
+import socket
 
 TORRENT_PIECE_LENGTH = 524288  # 2^19
+# TORRENT_PIECE_LENGTH = 2048  # For testing
 
 
 class TuncError(Exception):
@@ -85,8 +87,11 @@ def decode(string):
     return decode_helper(string)[0]
 
 
-def create_torrent_file(filename, tracker_url):
+def create_torrent_file(filename, *, tracker_url=None, port=42421):
     # Assumes single file is given and it is in the current directory
+    # trackerurl should be "http://ip:port"
+    if not tracker_url:
+        tracker_url = f"http://{socket.gethostbyname_ex(socket.gethostname())[-1][0]}:{port}"
     d = dict()
     info = dict()
     info[b"name"] = filename.encode()
