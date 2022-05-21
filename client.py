@@ -280,7 +280,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     with open(args.torrent_file, "rb") as f:
         torrent_d = bencoding.decode(f.read())
-    if args.downloaded:
+    if args.file:
         # TODO check if given torrent file matches the file (look at the hash?)
         client = Client(torrent_d, args.ip, args.port, already_has_file=True, debug=args.debug)
     else:
